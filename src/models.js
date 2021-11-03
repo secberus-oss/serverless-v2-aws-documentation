@@ -43,6 +43,8 @@ module.exports = {
   createCfModel: function createCfModel(restApiId) {
     return function(model) {
 
+      if (model.unmanaged) return null
+
       let cfModel = {
         Type: 'AWS::ApiGateway::Model',
         Properties: {
@@ -61,13 +63,14 @@ module.exports = {
     }
   },
 
-  addModelDependencies: function addModelDependencies(models, resource) {
+  addModelDependencies: function addModelDependencies(models, resource, resources) {
     Object.keys(models).forEach(contentType => {
-      resource.DependsOn.add(`${models[contentType]}Model`);
+      const name = `${models[contentType]}Model`;
+      if (resources[name]) resource.DependsOn.add(name);
     });
   },
 
-  addMethodResponses: function addMethodResponses(resource, documentation) {
+  addMethodResponses: function addMethodResponses(resource, documentation, resources) {
     if (documentation.methodResponses) {
       if (!resource.Properties.MethodResponses) {
         resource.Properties.MethodResponses = [];
@@ -96,15 +99,15 @@ module.exports = {
 
         if (response.responseModels) {
           _response.ResponseModels = response.responseModels;
-          this.addModelDependencies(_response.ResponseModels, resource);
+          this.addModelDependencies(_response.ResponseModels, resource, resources);
         }
       });
     }
   },
 
-  addRequestModels: function addRequestModels(resource, documentation) {
+  addRequestModels: function addRequestModels(resource, documentation, resources) {
     if (documentation.requestModels && Object.keys(documentation.requestModels).length > 0) {
-      this.addModelDependencies(documentation.requestModels, resource);
+      this.addModelDependencies(documentation.requestModels, resource, resources);
       resource.Properties.RequestModels = documentation.requestModels;
     }
   }

@@ -167,7 +167,7 @@ class ServerlessV2AWSDocumentation {
       // Add model resources
       const models = this.customVars.documentation.models.map(cfModelCreator)
         .reduce((modelObj, model) => {
-          modelObj[`${model.Properties.Name}Model`] = model;
+          if (model) modelObj[`${model.Properties.Name}Model`] = model;
           return modelObj;
         }, {});
       Object.assign(this.cfTemplate.Resources, models);
