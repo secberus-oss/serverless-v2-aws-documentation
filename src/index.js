@@ -167,7 +167,7 @@ class ServerlessV2AWSDocumentation {
         return acc;
       }, {});
 
-      const cfModelCreator = this.createCfModel(restApiId);
+      const cfModelCreator = this.createCfModel(restApiId, this._models);
 
       // Add model resources
       const models = this.customVars.documentation.models.map(cfModelCreator)
