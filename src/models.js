@@ -67,7 +67,7 @@ module.exports = {
     Object.keys(models).forEach(contentType => {
       const name = models[contentType];
       const _model = _models[name];
-      if (!_model) throw new Error(`unrecognized model '${name}'"`);
+      if (!_model) throw new Error(`unrecognized model: ${name}`);
       if (!_model.unmanaged) resource.DependsOn.add(`${name}Model`);
     });
   },
