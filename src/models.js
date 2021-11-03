@@ -63,14 +63,14 @@ module.exports = {
     }
   },
 
-  addModelDependencies: function addModelDependencies(models, resource, resources) {
+  addModelDependencies: function addModelDependencies(models, resource, _models) {
     Object.keys(models).forEach(contentType => {
-      const name = `${models[contentType]}Model`;
-      if (resources[name]) resource.DependsOn.add(name);
+      const name = models[contentType];
+      if (!_models[name].unmanaged) resource.DependsOn.add(`${name}Model`);
     });
   },
 
-  addMethodResponses: function addMethodResponses(resource, documentation, resources) {
+  addMethodResponses: function addMethodResponses(resource, documentation, _models) {
     if (documentation.methodResponses) {
       if (!resource.Properties.MethodResponses) {
         resource.Properties.MethodResponses = [];
@@ -99,15 +99,15 @@ module.exports = {
 
         if (response.responseModels) {
           _response.ResponseModels = response.responseModels;
-          this.addModelDependencies(_response.ResponseModels, resource, resources);
+          this.addModelDependencies(_response.ResponseModels, resource, _models);
         }
       });
     }
   },
 
-  addRequestModels: function addRequestModels(resource, documentation, resources) {
+  addRequestModels: function addRequestModels(resource, documentation, _models) {
     if (documentation.requestModels && Object.keys(documentation.requestModels).length > 0) {
-      this.addModelDependencies(documentation.requestModels, resource, resources);
+      this.addModelDependencies(documentation.requestModels, resource, _models);
       resource.Properties.RequestModels = documentation.requestModels;
     }
   }
